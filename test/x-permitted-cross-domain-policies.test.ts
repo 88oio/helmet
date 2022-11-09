@@ -18,7 +18,7 @@ describe("X-Permitted-Cross-Domain-Policies middleware", () => {
     );
   });
 
-  ["none", "master-only", "by-content-type", "all"].forEach(
+  (["none", "master-only", "by-content-type", "all"] as const).forEach(
     (permittedPolicies) => {
       it(`sets "X-Permitted-Cross-Domain-Policies: ${permittedPolicies}" when told to`, async () => {
         await check(xPermittedCrossDomainPolicies({ permittedPolicies }), {
@@ -33,13 +33,15 @@ describe("X-Permitted-Cross-Domain-Policies middleware", () => {
       "",
       "NONE",
       "by-ftp-filename",
-      123 as any,
-      null as any,
-      new String("none") as any,
+      123,
+      null,
+      new String("none"),
     ];
     for (const permittedPolicies of invalidValues) {
       expect(() =>
-        xPermittedCrossDomainPolicies({ permittedPolicies })
+        xPermittedCrossDomainPolicies({
+          permittedPolicies: permittedPolicies as any,
+        })
       ).toThrow(/^X-Permitted-Cross-Domain-Policies does not support /);
     }
   });

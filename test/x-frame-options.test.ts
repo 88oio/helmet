@@ -18,44 +18,51 @@ describe("X-Frame-Options middleware", () => {
   });
 
   it('can set "X-Frame-Options: DENY"', async () => {
-    await check(xFrameOptions({ action: "DENY" }), {
-      "x-frame-options": "DENY",
-    });
     await check(xFrameOptions({ action: "deny" }), {
       "x-frame-options": "DENY",
     });
-    await check(xFrameOptions({ action: "deNY" }), {
+
+    // These are not allowed by the types, but are supported.
+    await check(xFrameOptions({ action: "DENY" as any }), {
+      "x-frame-options": "DENY",
+    });
+    await check(xFrameOptions({ action: "deNY" as any }), {
       "x-frame-options": "DENY",
     });
   });
 
   it('can set "X-Frame-Options: SAMEORIGIN" when specified', async () => {
-    await check(xFrameOptions({ action: "SAMEORIGIN" }), {
-      "x-frame-options": "SAMEORIGIN",
-    });
     await check(xFrameOptions({ action: "sameorigin" }), {
       "x-frame-options": "SAMEORIGIN",
     });
-    await check(xFrameOptions({ action: "sameORIGIN" }), {
+
+    // These are not allowed by the types, but are supported.
+    await check(xFrameOptions({ action: "SAMEORIGIN" as any }), {
       "x-frame-options": "SAMEORIGIN",
     });
-    await check(xFrameOptions({ action: "SAME-ORIGIN" }), {
+    await check(xFrameOptions({ action: "sameORIGIN" as any }), {
       "x-frame-options": "SAMEORIGIN",
     });
-    await check(xFrameOptions({ action: "same-origin" }), {
+    await check(xFrameOptions({ action: "SAME-ORIGIN" as any }), {
+      "x-frame-options": "SAMEORIGIN",
+    });
+    await check(xFrameOptions({ action: "same-origin" as any }), {
       "x-frame-options": "SAMEORIGIN",
     });
   });
 
   it("throws when passed invalid actions", () => {
-    for (const action of ["allow-from", "ALLOW-FROM"]) {
-      expect(() => xFrameOptions({ action })).toThrow(
-        /^X-Frame-Options no longer supports `ALLOW-FROM` due to poor browser support. See <https:\/\/github.com\/helmetjs\/helmet\/wiki\/How-to-use-X%E2%80%93Frame%E2%80%93Options's-%60ALLOW%E2%80%93FROM%60-directive> for more info.$/
-      );
-    }
-
-    for (const action of ["garbage", "", 123 as any, null as any]) {
-      expect(() => xFrameOptions({ action })).toThrow(
+    for (const action of [
+      "",
+      "foo",
+      " deny",
+      "allow-from",
+      "ALLOW-FROM",
+      123,
+      null,
+      new String("SAMEORIGIN"),
+    ]) {
+      expect(() => xFrameOptions({ action: action as any })).toThrow(
         /^X-Frame-Options received an invalid action /
       );
     }

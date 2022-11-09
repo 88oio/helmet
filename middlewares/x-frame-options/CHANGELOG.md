@@ -4,7 +4,8 @@
 
 ### Changed
 
-- Add TypeScript editor autocomplete. See [#322](https://github.com/helmetjs/helmet/pull/322)
+- **Breaking:** increase TypeScript strictness around arguments. Only affects TypeScript users. See [helmetjs/helmet#369](https://github.com/helmetjs/helmet/issues/369)
+- No longer offer a specific error when trying to use `ALLOW-FROM`; it just says that it is unsupported. Only the error message has changed
 
 ## 4.0.0 - 2020-12-21
 

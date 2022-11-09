@@ -15,7 +15,7 @@ describe("Cross-Origin-Opener-Policy middleware", () => {
     );
   });
 
-  ["same-origin", "same-origin-allow-popups", "unsafe-none"].forEach(
+  (["same-origin", "same-origin-allow-popups", "unsafe-none"] as const).forEach(
     (policy) => {
       it(`sets "Cross-Origin-Opener-Policy: ${policy}" when told to`, async () => {
         await check(crossOriginOpenerPolicy({ policy }), {
@@ -28,14 +28,14 @@ describe("Cross-Origin-Opener-Policy middleware", () => {
   it("throws when setting the policy to an invalid value", () => {
     const invalidValues = [
       "",
-      "NONE",
-      "by-ftp-filename",
-      123 as any,
-      null as any,
-      new String("none") as any,
+      "foo",
+      "SAME-ORIGIN",
+      123,
+      null,
+      new String("same-origin"),
     ];
     for (const policy of invalidValues) {
-      expect(() => crossOriginOpenerPolicy({ policy })).toThrow(
+      expect(() => crossOriginOpenerPolicy({ policy: policy as any })).toThrow(
         /^Cross-Origin-Opener-Policy does not support /
       );
     }

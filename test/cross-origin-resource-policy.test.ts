@@ -18,7 +18,7 @@ describe("Cross-Origin-Resource-Policy middleware", () => {
     );
   });
 
-  ["same-origin", "same-site", "cross-origin"].forEach((policy) => {
+  (["same-origin", "same-site", "cross-origin"] as const).forEach((policy) => {
     it(`sets "Cross-Origin-Resource-Policy: ${policy}" when told to`, async () => {
       await check(crossOriginResourcePolicy({ policy }), {
         "cross-origin-resource-policy": policy,
@@ -29,16 +29,16 @@ describe("Cross-Origin-Resource-Policy middleware", () => {
   it("throws when setting the policy to an invalid value", () => {
     const invalidValues = [
       "",
-      "NONE",
-      "by-ftp-filename",
-      123 as any,
-      null as any,
-      new String("none") as any,
+      "foo",
+      "CROSS-ORIGIN",
+      123,
+      null,
+      new String("none"),
     ];
     for (const policy of invalidValues) {
-      expect(() => crossOriginResourcePolicy({ policy })).toThrow(
-        /^Cross-Origin-Resource-Policy does not support /
-      );
+      expect(() =>
+        crossOriginResourcePolicy({ policy: policy as any })
+      ).toThrow(/^Cross-Origin-Resource-Policy does not support /);
     }
   });
 });

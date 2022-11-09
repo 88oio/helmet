@@ -17,17 +17,19 @@ describe("Referrer-Policy middleware", () => {
     });
   });
 
-  [
-    "no-referrer",
-    "no-referrer-when-downgrade",
-    "same-origin",
-    "origin",
-    "strict-origin",
-    "origin-when-cross-origin",
-    "strict-origin-when-cross-origin",
-    "unsafe-url",
-    "",
-  ].forEach((policy) => {
+  (
+    [
+      "no-referrer",
+      "no-referrer-when-downgrade",
+      "same-origin",
+      "origin",
+      "strict-origin",
+      "origin-when-cross-origin",
+      "strict-origin-when-cross-origin",
+      "unsafe-url",
+      "",
+    ] as const
+  ).forEach((policy) => {
     it(`can set the header to "${policy}" by specifying it as a string`, async () => {
       await check(referrerPolicy({ policy }), {
         "referrer-policy": policy,
@@ -48,12 +50,10 @@ describe("Referrer-Policy middleware", () => {
   });
 
   it("fails with a bad policy", () => {
-    expect(referrerPolicy.bind(null, { policy: "garbage" })).toThrow();
-    expect(referrerPolicy.bind(null, { policy: "sameorigin" })).toThrow();
-    expect(referrerPolicy.bind(null, { policy: 123 as any })).toThrow();
-    expect(referrerPolicy.bind(null, { policy: false as any })).toThrow();
-    expect(referrerPolicy.bind(null, { policy: null as any })).toThrow();
-    expect(referrerPolicy.bind(null, { policy: {} as any })).toThrow();
+    const invalidValues = ["foo", "sameorigin", "ORIGIN", 123, false, null, {}];
+    for (const policy of invalidValues) {
+      expect(referrerPolicy.bind(null, { policy: policy as any })).toThrow();
+    }
   });
 
   it("fails with an empty array", () => {
